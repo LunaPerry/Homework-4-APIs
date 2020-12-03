@@ -127,7 +127,7 @@ def historical_results():
     result_json = requests.get(URL, params=params).json()
 
     # Uncomment the line below to see the results of the API call!
-    # pp.pprint(result_json)
+    pp.pprint(result_json)
 
     current_results = result_json['current']
     hourly_results = result_json['hourly']
@@ -138,7 +138,7 @@ def historical_results():
         'lat': latitude,
         'lon': longitude,
         'units': units,
-        'temp_units': get_units_for_temp(units),
+        'units_letter': get_letter_for_units(units),
         'description': current_results['weather'][0]['description'],
         'temp': current_results['temp'],
         'min_temp': get_min_temp(hourly_results),
