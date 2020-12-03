@@ -108,7 +108,7 @@ def historical_results():
     # TODO: Use 'request.args' to retrieve the city & units from the query
     # parameters.
     city = request.args.get('city')
-    date = '2020-08-26'
+    date = request.args.get('date')
     units = request.args.get('units')
     date_obj = datetime.strptime(date, '%Y-%m-%d')
     date_in_seconds = date_obj.strftime('%s')
@@ -130,7 +130,7 @@ def historical_results():
         # https://openweathermap.org/api/one-call-api
         "lat": latitude,
         "lon": longitude,
-        "dt": date_in_seconds,
+        "dt": int(date_in_seconds),
         "appid": "e5c9c8bd2e3f6f30c4badb96b76aac93",
         "units": units
     }
