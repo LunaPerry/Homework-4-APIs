@@ -111,51 +111,38 @@ def historical_results():
     date = request.args.get('date')
     units = request.args.get('units')
     date_obj = datetime.strptime(date, '%Y-%m-%d')
-    date_in_seconds = date_obj.strftime('%s')
-
+    date_in_seconds = date_obj.timestamp()
     latitude, longitude = get_lat_lon(city)
 
-    if units == 'imperial':
-        unit_letter = 'F'
-    elif units == 'metric':
-        unit_letter = 'C'
-    elif units == 'kelvin':
-        unit_letter = 'K'
-
-    url = 'http://api.openweathermap.org/data/2.5/onecall/timemachine'
+    # API docs: https://openweathermap.org/api/one-call-api
+    URL = 'http://api.openweathermap.org/data/2.5/onecall/timemachine'
     params = {
-        # TODO: Enter query parameters here for the 'appid' (your api key),
-        # latitude, longitude, units, & date (in seconds).
-        # See the documentation here (scroll down to "Historical weather data"):
-        # https://openweathermap.org/api/one-call-api
-        "lat": latitude,
-        "lon": longitude,
-        "dt": int(date_in_seconds),
-        "appid": "e5c9c8bd2e3f6f30c4badb96b76aac93",
-        "units": units
+        'appid': "e5c9c8bd2e3f6f30c4badb96b76aac93",
+        'lat': latitude,
+        'lon': longitude,
+        'units': units,
+        'dt': int(date_in_seconds)
     }
 
-    result_json = requests.get(url, params=params).json()
+    result_json = requests.get(URL, params=params).json()
 
     # Uncomment the line below to see the results of the API call!
-    pp.pprint(result_json)
+    # pp.pprint(result_json)
 
-    result_current = result_json['current']
-    result_hourly = result_json['hourly']
+    current_results = result_json['current']
+    hourly_results = result_json['hourly']
 
-    # TODO: Replace the empty variables below with their appropriate values.
-    # You'll need to retrieve these from the 'result_current' object above.
     context = {
         'city': city,
         'date': date_obj,
         'lat': latitude,
         'lon': longitude,
         'units': units,
-        'units_letter': unit_letter, # should be 'C', 'F', or 'K'
-        'description': result_json['weather'][0]['description'],
-        'temp': result_current['temp'],
-        'min_temp': get_min_temp(result_hourly),
-        'max_temp': get_max_temp(result_hourly)
+        'temp_units': get_units_for_temp(units),
+        'description': current_results['weather'][0]['description'],
+        'temp': current_results['temp'],
+        'min_temp': get_min_temp(hourly_results),
+        'max_temp': get_max_temp(hourly_results)
     }
 
     return render_template('historical_results.html', **context)
