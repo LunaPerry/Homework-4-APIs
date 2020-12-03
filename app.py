@@ -130,9 +130,9 @@ def historical_results():
         # https://openweathermap.org/api/one-call-api
         "lat": latitude,
         "lon": longitude,
+        "dt": date_in_seconds,
         "appid": "e5c9c8bd2e3f6f30c4badb96b76aac93",
         "units": units
-        
     }
 
     result_json = requests.get(url, params=params).json()
@@ -153,9 +153,9 @@ def historical_results():
         'units': units,
         'units_letter': unit_letter, # should be 'C', 'F', or 'K'
         'description': result_json['weather'][0]['description'],
-        'temp': '',
-        'min_temp': get_min_temp(result_json['hourly']),
-        'max_temp': get_max_temp(result_json['hourly'])
+        'temp': result_current['temp'],
+        'min_temp': get_min_temp(result_hourly),
+        'max_temp': get_max_temp(result_hourly)
     }
 
     return render_template('historical_results.html', **context)
